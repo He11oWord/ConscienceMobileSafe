@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.http.HttpConnection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.consciencemobilesafe.app.R;
 import com.consciencemobilesafe.utils.StreamTools;
@@ -15,20 +17,33 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 import android.view.Menu;
+import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class SplashActivity extends Activity {
 	protected static final String TAG = "SplashActivity";
 	protected static final int ENTER_HOME = 0;
+	protected static final int SHOW_UPDATE_DIALOG = 1;
 	protected static final int URL_ERROR = 2;
 	protected static final int NETWORK_ERROR = 3;
+	protected static final int JSON_ERROR = 4;
+	
+	private String description;
+	private String version;
+	private String apkurl;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +54,19 @@ public class SplashActivity extends Activity {
 		splash_text.setText("版本号:"+getVersionCode());
 		
 		//检查更新
-		checkUpdate();
+		CheckUpdate();
+		
+		
+		/**
+		 * 渐变消失效果
+		 * 设置透明度，从0.2到1.0
+		 * 设置变化的时间
+		 * 将这个页面设置这个效果
+		 */
+		AlphaAnimation aa = new AlphaAnimation(0.2f, 1.0f);
+		aa.setDuration(500);
+		findViewById(R.id.rl_root_splash).startAnimation(aa);
+	
 	}
 
 	/**
@@ -54,18 +81,27 @@ public class SplashActivity extends Activity {
 			switch(msg.what){
 			//进入主页面
 			case ENTER_HOME:
-				enterHome();
+				Toast.makeText(SplashActivity.this, "欢迎进入", 0).show();
+				EnterHome();
+				break;
+			//弹出升级对话框
+			case SHOW_UPDATE_DIALOG:
+				ShowUpdateDialog();
 				break;
 			//URL错误，进入主页面
 			case URL_ERROR:
-				enterHome();
-				Toast.makeText(getApplicationContext(), "URL错误", 0);
+				EnterHome();
+				Toast.makeText(SplashActivity.this, "URL错误", 0).show();
 				break;
 			//网络连接错误，进入主页面
 			case NETWORK_ERROR:
-				Toast.makeText(getApplicationContext(), "网络错误", 0);
-				enterHome();
+				Toast.makeText(SplashActivity.this, "网络错误", 0).show();
+				EnterHome();
 				break;	
+			case JSON_ERROR:
+				Toast.makeText(SplashActivity.this, "JSON解析错误", 0).show();
+				ShowUpdateDialog();
+				//EnterHome();
 			default:
 				break;
 			}
@@ -75,11 +111,10 @@ public class SplashActivity extends Activity {
 		
 	};
 	
-	
 	/**
 	 * 检查是否有新版本
 	 */
-	private void checkUpdate(){
+	private void CheckUpdate(){
 		
 		new Thread(){
 			Message mes = new Message();
@@ -104,7 +139,21 @@ public class SplashActivity extends Activity {
 						String result = StreamTools.readFromStream(is);
 						Log.i(TAG, "联网成功"+result);
 						
-						mes.what = ENTER_HOME;
+						//获得JESO实例
+						JSONObject obj = new JSONObject(result);
+						version = (String) obj.get("verson");
+						description = (String) obj.get("description");
+						apkurl = (String) obj.get("apkurl");
+						
+						//判断版本是否是最新版
+						if(getVersionCode().equals(version)){
+							//版本一致，没有最新版
+							mes.what = ENTER_HOME;
+						}else{
+							//版本不一致，弹出升级对话框
+							mes.what = SHOW_UPDATE_DIALOG;
+						}
+						
 					}
 				}catch(MalformedURLException e){
 					mes.what = URL_ERROR;
@@ -112,6 +161,9 @@ public class SplashActivity extends Activity {
 				
 				}catch(IOException e){
 					mes.what = NETWORK_ERROR;
+					e.printStackTrace();
+				} catch (JSONException e) {
+					mes.what = JSON_ERROR;
 					e.printStackTrace();
 				}finally{
 					
@@ -135,8 +187,46 @@ public class SplashActivity extends Activity {
 		}.start();
 	}
 	
-	
-	
+	/**
+	 * 弹出升级对话框
+	 */
+	protected void ShowUpdateDialog(){
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setTitle("提示升级");
+		
+		//设置不能取消
+		//builder.setCancelable(false);
+		
+		builder.setOnCancelListener(new OnCancelListener() {
+			
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				//进入主页面
+				EnterHome();
+			}
+		});
+		
+		builder.setMessage("发现新版本，是否升级");
+		builder.setPositiveButton("立刻升级", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//立刻升级该完成的操作 
+				
+			}
+		}); 
+		
+		builder.setNegativeButton("暂时不用", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// 不升级，进入主页面
+				EnterHome();
+				dialog.dismiss();
+			}
+		});
+		builder.show();
+	}
 	
 	/**
 	 * 获取当前的版本号
@@ -155,7 +245,10 @@ public class SplashActivity extends Activity {
 		
 	}
 
-	protected void enterHome() {
+	/**
+	 * 进入主页面
+	 */
+	protected void EnterHome() {
 		Intent intent = new Intent(this,HomeActivity.class);
 		startActivity(intent);
 		finish();
