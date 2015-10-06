@@ -1,4 +1,4 @@
-package com.consciencemobilesafe.ui;
+package edu.gxut.consciencemobilesafe.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;

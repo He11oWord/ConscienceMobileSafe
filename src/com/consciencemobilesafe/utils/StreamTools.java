@@ -1,4 +1,4 @@
-package com.consciencemobilesafe.utils;
+package edu.gxut.consciencemobilesafe.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
