@@ -5,30 +5,27 @@
     android:orientation="vertical"
     android:background="#ffffff"
     >
-   
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="55dip"
-        android:background="#8866ff00"
-        android:gravity="center"
+	
+    <TextView android:id="@+id/home_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="55sp"
         android:text="功能列表"
-        android:textColor="#000000"
-        android:textSize="22sp" />
-
-    <com.itheima.mobilesafe.ui.FocusedTextView
+        android:gravity="center"
+        android:textSize="25sp"
+        android:background="#8866ff00"/>
+    
+    <com.consciencemobilesafe.ui.FocusedTextView
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textSize="18sp"
-        android:text="最新的手机卫士，快来下载啊，下载送好吃的，最新的手机卫士，快来下载啊，下载送好吃的"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <GridView
-        android:id="@+id/list_home"
+        android:text="最新版良心手机卫士，你懂的！最新版良心手机卫士，你懂的！"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="15dip"
+        android:layout_height="wrap_content"/>
+    
+    <GridView 
         android:numColumns="3"
-        android:verticalSpacing="10dip" />
+        android:id="@+id/home_grid_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+     
 </LinearLayout>

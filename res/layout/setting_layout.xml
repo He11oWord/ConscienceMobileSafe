@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gxut="http://schemas.android.com/apk/res/com.consciencemobilesafe.app"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+ 	<TextView 
+ 	    android:id="@+id/setting_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="55sp"
+        android:text="设置中心"
+        android:gravity="center"
+        android:textSize="25sp"
+        android:background="#8866ff00"/>
+ 	
+ 	<com.consciencemobilesafe.ui.SettingItemView
+ 	    gxut:title = "设置是否自动更新"
+ 	    gxut:desc_on = "自动更新已经开启"
+ 	    gxut:desc_off = "自动更新已经关闭"
+ 	    android:id="@+id/siv_update"
+ 	    android:layout_width="wrap_content"
+ 	    android:layout_height="wrap_content"
+ 	    >
+ 	    
+ 	</com.consciencemobilesafe.ui.SettingItemView>
+ 	
+</LinearLayout>
