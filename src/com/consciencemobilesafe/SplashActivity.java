@@ -1,4 +1,4 @@
-package edu.gxut.consciencemobilesafe;
+package com.consciencemobilesafe;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,8 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.consciencemobilesafe.app.R;
+import com.consciencemobilesafe.utils.StreamTools;
 
-import edu.gxut.consciencemobilesafe.utils.StreamTools;
 
 import android.os.Bundle;
 import android.os.Handler;
