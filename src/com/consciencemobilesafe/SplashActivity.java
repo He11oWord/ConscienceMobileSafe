@@ -67,7 +67,7 @@ public class SplashActivity extends Activity {
 				
 				@Override
 				public void run() {
-					EnterHome();
+					enterName();
 				}
 			}, 2000);
 			
@@ -101,25 +101,25 @@ public class SplashActivity extends Activity {
 			//进入主页面
 			case ENTER_HOME:
 				Toast.makeText(SplashActivity.this, "欢迎进入", 0).show();
-				EnterHome();
+				enterName();
 				break;
 			//弹出升级对话框
 			case SHOW_UPDATE_DIALOG:
-				ShowUpdateDialog();
+				showUpdateDialog();
 				break;
 			//URL错误，进入主页面
 			case URL_ERROR:
-				EnterHome();
+				enterName();
 				Toast.makeText(SplashActivity.this, "URL错误", 0).show();
 				break;
 			//网络连接错误，进入主页面
 			case NETWORK_ERROR:
 				Toast.makeText(SplashActivity.this, "网络错误", 0).show();
-				EnterHome();
+				enterName();
 				break;	
 			case JSON_ERROR:
 				Toast.makeText(SplashActivity.this, "JSON解析错误", 0).show();
-				ShowUpdateDialog();
+				showUpdateDialog();
 				//EnterHome();
 			default:
 				break;
@@ -209,7 +209,7 @@ public class SplashActivity extends Activity {
 	/**
 	 * 弹出升级对话框
 	 */
-	protected void ShowUpdateDialog(){
+	protected void showUpdateDialog(){
 		AlertDialog.Builder builder = new Builder(this);
 		builder.setTitle("提示升级");
 		
@@ -221,7 +221,7 @@ public class SplashActivity extends Activity {
 			@Override
 			public void onCancel(DialogInterface dialog) {
 				//进入主页面
-				EnterHome();
+				enterName();
 			}
 		});
 		
@@ -240,7 +240,7 @@ public class SplashActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// 不升级，进入主页面
-				EnterHome();
+				enterName();
 				dialog.dismiss();
 			}
 		});
@@ -267,7 +267,7 @@ public class SplashActivity extends Activity {
 	/**
 	 * 进入主页面
 	 */
-	protected void EnterHome() {
+	protected void enterName() {
 		Intent intent = new Intent(this,HomeActivity.class);
 		startActivity(intent);
 		finish();

@@ -54,6 +54,7 @@ public class SettingItemView extends RelativeLayout {
 		desc_off = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.consciencemobilesafe.app", "desc_off");
 		
 		item_title.setText(tv_title);
+		setText(desc_off);
 		
 		
 	}

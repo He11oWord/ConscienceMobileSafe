@@ -7,13 +7,14 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="com.consciencemobilesafe.SplashActivity"
             android:label="@string/app_name" >
@@ -23,8 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.consciencemobilesafe.HomeActivity"/>
-        <activity android:name="com.consciencemobilesafe.SettingActivity"/>
+        <activity android:name="com.consciencemobilesafe.HomeActivity" />
+        <activity android:name="com.consciencemobilesafe.SettingActivity" />
+        <activity android:name="com.consciencemobilesafe.SetupActivity1" />
+        <activity android:name="com.consciencemobilesafe.LostFindActivity" />
+        <activity android:name="com.consciencemobilesafe.SetupActivity2" />
+        <activity android:name="com.consciencemobilesafe.SetupActivity3" />
+        <activity android:name="com.consciencemobilesafe.SetupActivity4" />
     </application>
 
 </manifest>
