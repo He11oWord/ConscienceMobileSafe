@@ -29,6 +29,7 @@
         android:inputType="number"/>
 
     <Button
+        android:onClick="selectContact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="选择联系人" />
