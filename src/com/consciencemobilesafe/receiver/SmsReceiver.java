@@ -1,8 +1,12 @@
 package com.consciencemobilesafe.receiver;
 
+
+import com.consciencemobilesafe.app.R;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -26,12 +30,23 @@ public class SmsReceiver extends BroadcastReceiver {
 				
 				if("#*alarm*#".equals(sendBody)){
 					Log.d(TAG , "播放报警音乐：#*alarm*#");
+					MediaPlayer mp = MediaPlayer.create(context,R.raw.ylzs);
+					//设置循环
+					mp.setLooping(false);
+					mp.setVolume(1.0f, 1.0f);
+					mp.start();
 				}else if("#*location*#".equals(sendBody)){
 					Log.d(TAG , "GPS追踪：#*location*#");
+					
+					
 				}else if("#*lockscreen*#".equals(sendBody)){
 					Log.d(TAG , "远程锁屏：#*lockscreen*#");
+					
+					
 				}else if("#*wipedata*#".equals(sendBody)){
 					Log.d(TAG , "远程数据销毁：#*wipedata*#");
+					
+					
 				}else{
 					Log.i(TAG , "fuck");
 					System.out.println("fuck");
@@ -39,9 +54,7 @@ public class SmsReceiver extends BroadcastReceiver {
 				
 				System.out.println("fuck2");
 			}
-		
 	}
-
 }	
 	
 
