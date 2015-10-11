@@ -1,4 +1,4 @@
-package com.itheima.mobilesafe.service;
+package com.consciencemobilesafe.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,34 +13,29 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.renderscript.Double2;
 
-public class GPSService extends Service {
-	// 用到位置服务
+public class GPSService extends Service{
+
 	private LocationManager lm;
 	private MyLocationListener listener;
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	SharedPreferences sp = null;
 
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
 		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-		// List<String> provider = lm.getAllProviders();
-		// for(String l: provider){
-		// System.out.println(l);
-		// }
 		listener = new MyLocationListener();
-		// 注册监听位置服务
-		// 给位置提供者设置条件
+		sp = getSharedPreferences("config",MODE_PRIVATE);
+		
+		
+		//获取最佳的定位方式,设置该方式为最佳的
 		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
+		criteria.setAccuracy(Criteria.ACCURACY_FINE	);
+		
+		
+		
 		// 设置参数细化：
 		// criteria.setAccuracy(Criteria.ACCURACY_FINE);//设置为最大精度
 		// criteria.setAltitudeRequired(false);//不要求海拔信息
@@ -48,77 +43,75 @@ public class GPSService extends Service {
 		// criteria.setCostAllowed(true);//是否允许付费
 		// criteria.setPowerRequirement(Criteria.POWER_LOW);//对电量的要求
 
-		String proveder = lm.getBestProvider(criteria, true);
-		lm.requestLocationUpdates(proveder, 0, 0, listener);
+		String bestProvider = lm.getBestProvider(criteria, true);
+		lm.requestLocationUpdates(bestProvider, 0, 0, listener);
+
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		// 取消监听位置服务
+		//取消监听
 		lm.removeUpdates(listener);
 		listener = null;
 	}
 
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+	
+	
 	class MyLocationListener implements LocationListener {
 
-		/**
-		 * 当位置改变的时候回调
-		 */
-
+		// 当位置发生改变的时候调用
 		@Override
 		public void onLocationChanged(Location location) {
-			String longitude = "j:" + location.getLongitude() + "\n";
-			String latitude = "w:" + location.getLatitude() + "\n";
-			String accuracy = "a" + location.getAccuracy() + "\n";
-			// 发短信给安全号码
-
-			// 把标准的GPS坐标转换成火星坐标
-//			InputStream is;
-//			try {
-//				is = getAssets().open("axisoffset.dat");
-//				ModifyOffset offset = ModifyOffset.getInstance(is);
-//				PointDouble double1 = offset.s2c(new PointDouble(location
-//						.getLongitude(), location.getLatitude()));
-//				longitude ="j:" + offset.X+ "\n";
-//				latitude =  "w:" +offset.Y+ "\n";
-//				
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-
-			SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+			//
+			String longitude = "纬度：" + location.getLongitude()			;
+			String latitude  = "经度：" + location.getLatitude();
+			String accuracy = "精度" + location.getAccuracy();
+		
+			//将GPS坐标改成加偏（火星）坐标
+			try {
+				//"axisoffset.dat"为数据库
+				InputStream is = getAssets().open("axisoffset.dat");
+				ModifyOffset instance = ModifyOffset.getInstance(is);
+				instance.s2c(new PointDouble(location.getLatitude(), location.getLongitude()));
+				//更改
+				longitude =  "纬度：" + instance.Y;
+				latitude  = "经度："+instance.X;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			//保存位置，然后发送短信
 			Editor editor = sp.edit();
-			editor.putString("lastlocation", longitude + latitude + accuracy);
+			editor.putString("lastLocation", longitude+latitude+accuracy);
 			editor.commit();
-
+			
+			
 		}
 
-		/**
-		 * 当状态发生改变的时候回调 开启--关闭 ；关闭--开启
-		 */
+		// 当状态发生改变的时候调用（checkBox）
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/**
-		 * 某一个位置提供者可以使用了
-		 */
+		// 当某项服务可用时调用
 		@Override
 		public void onProviderEnabled(String provider) {
 			// TODO Auto-generated method stub
 
 		}
 
-		/**
-		 * 某一个位置提供者不可以使用了
-		 */
+		// 当某项服务不可用时调用
 		@Override
 		public void onProviderDisabled(String provider) {
 			// TODO Auto-generated method stub
@@ -126,5 +119,6 @@ public class GPSService extends Service {
 		}
 
 	}
-
+	
+	
 }

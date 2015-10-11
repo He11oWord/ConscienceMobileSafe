@@ -1,11 +1,10 @@
-package com.itheima.mobilesafe.service;
-
+package com.consciencemobilesafe.service;
 
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
 /**
- * 鐏槦鍦扮悆鍧愭爣杞寲.鍦板浘鍧愭爣淇亸
+ * 火星地球坐标转化.地图坐标修偏
  * 
  */
 public class ModifyOffset {
