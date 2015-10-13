@@ -62,6 +62,8 @@ public class HomeActivity extends Activity {
 		homeGridView.setAdapter(adapter);
 		homeGridView.setOnItemClickListener(new OnItemClickListener() {
 
+			private Intent intent;
+
 			@Override
 			public void onItemClick(AdapterView<?> homeG, View view, int position,
 					long id) {
@@ -69,8 +71,12 @@ public class HomeActivity extends Activity {
 				case 0 ://进入防盗中心
 					showLostPhoneDialog();
 					break;
+				case 7 ://选中设置中心
+					intent = new Intent(HomeActivity.this,AtoolActivity.class);
+					startActivity(intent);
+					break;
 				case 8 ://选中设置中心
-					Intent intent = new Intent(HomeActivity.this,SettingActivity.class);
+					intent = new Intent(HomeActivity.this,SettingActivity.class);
 					startActivity(intent);
 					break;
 					

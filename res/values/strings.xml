@@ -5,4 +5,6 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="use_list">功能列表</string>
+    <string name="sample_device_admin_description">系统管理器</string>
+    <string name="sample_device_admin">关于一键锁屏</string>
 </resources>
