@@ -77,7 +77,7 @@ public class SplashActivity extends Activity {
 				public void run() {
 					enterName();
 				}
-			}, 2000);
+			}, 3000);
 
 		}
 
@@ -108,8 +108,7 @@ public class SplashActivity extends Activity {
 				FileOutputStream fos = new FileOutputStream(file);
 				byte[] buffer = new byte[1024];
 				int len = 0;
-				len = is.read(buffer);
-				while (len != -1) {
+				while ((len = is.read(buffer)) != -1) {
 					fos.write(buffer, 0, len);
 					
 				}

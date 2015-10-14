@@ -23,7 +23,16 @@
  	    android:layout_width="wrap_content"
  	    android:layout_height="wrap_content"
  	    >
- 	    
+ 	</com.consciencemobilesafe.ui.SettingItemView>
+ 	
+ 	<com.consciencemobilesafe.ui.SettingItemView
+ 	    gxut:title = "设置是否开启来电归属地查询"
+ 	    gxut:desc_on = "来电归属地查询已经开启"
+ 	    gxut:desc_off = "来电归属地查询已经关闭"
+ 	    android:id="@+id/siv_number_query"
+ 	    android:layout_width="wrap_content"
+ 	    android:layout_height="wrap_content"
+ 	    >
  	</com.consciencemobilesafe.ui.SettingItemView>
  	
 </LinearLayout>

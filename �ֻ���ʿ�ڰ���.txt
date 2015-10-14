@@ -1,0 +1,473 @@
+8.1高级工具---手机号码归属地查询
+1.设置界面；2.查询方法：联网或是数据库3.使用数据库，则要将数据库导入文件中（这里设置导入一次即可）；4.设置输入查询，最低与最高值5.加入文本改变响应效果6.加入输入框抖动效果
+
+*************
+1.设置界面；
+
+*******************
+2.查询方法：联网或是数据库
+3.使用数据库，则要将数据库导入文件中（这里设置导入一次即可）；
+// path是数据库的地址，数据库放在assets文件夹中，无法进行读取。
+		// 解决办法是将数据库文件拷贝到/data/data/<包名>/files/adress.db下，该操作在初始化页面中实现
+		// 在NumberQueryUtil.JAVA
+		copyDB();
+/**
+	 * 拷贝电话数据库到个人目录之下
+	 */
+	@SuppressLint("ShowToast")
+	private void copyDB() {
+
+		try {
+			File file = new File(getFilesDir(), "address.db");
+			
+			//判断文件是否存在
+			if(file.exists() && file.length()>0){
+				Toast.makeText(this, "文件已存在", 0).show();
+			}else{
+				Toast.makeText(this, "文件不存在", 0).show();
+				InputStream is = getAssets().open("address.db");
+				FileOutputStream fos = new FileOutputStream(file);
+				byte[] buffer = new byte[1024];
+				int len = 0;
+				while ((len = is.read(buffer)) != -1) {
+					fos.write(buffer, 0, len);
+					
+				}
+				
+				is.close();
+				fos.close();
+			}
+		} catch (IOException e) {
+			Toast.makeText(this, "方法错误", 0).show();;
+			e.printStackTrace();
+
+		}
+
+	}
+
+**************
+4.设置输入查询，最低与最高值
+package com.consciencemobilesafe.utils;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
+import android.widget.Toast;
+
+/**
+ * 传入一个号码，返回归属地 numberQueryDB(String)
+ * 
+ * @author 钊
+ * 
+ */
+public class NumberQueryUtil {
+
+	private static String path = "data/data/com.consciencemobilesafe.app/files/address.db";
+
+	public static String numberQueryDB(String number) {
+
+		Cursor cursor = null;
+
+		// 待返回的地址
+		String address = number;
+
+		// path是数据库的地址，数据库放在assets文件夹中，无法进行读取。
+		// 解决办法是将数据库文件拷贝到data/data/<包名>/filesadress.db，该操作在初始化页面中实现
+		SQLiteDatabase openDatabase = SQLiteDatabase.openDatabase(path, null,
+				SQLiteDatabase.OPEN_READONLY);
+
+		// 判断输入的数字是不是手机号码
+		// 一般是13.14.15.16.18开头，使用 正则表达式就应该写成^1[34568]\d{9}
+		// if(number.length()<7){
+		// return number;
+		// }
+
+		if (number.matches("^1[34568]\\d{9}")) {
+			cursor = openDatabase
+					.rawQuery(
+							"select location from data2 where id = (select outkey from data1 where id = ?)",
+							// "select location from data2 where id = (select outkey from data1 where id = ?)",
+							new String[] { number.substring(0, 7) });
+
+			if (cursor.moveToNext()) {
+				address = cursor.getString(0);
+			}
+			cursor.close();
+		} else {
+			// 非手机号码，一些常用号码查询
+			switch (number.length()) {
+			case 3:
+				// 报警号码
+				address = "报警号码";
+				break;
+			case 4:
+				// 模拟器号码
+				address = "模拟器号码";
+				break;
+			case 5:
+				// 客服号码
+				address = "客服号码";
+				break;
+			case 7:
+				// 本地号码
+				address = "本地号码";
+				break;
+			case 8:
+				// 本地号码
+				address = "本地号码";
+				break;
+
+			default:
+				// 像010-1115161这种号码，主要查出前缀代表的城市
+				if (number.length() >= 10 && number.startsWith("0")) {
+					cursor = openDatabase.rawQuery(
+							"select location from data2 where area = ?",
+							new String[] { number.substring(1, 3) });
+					if (cursor.moveToNext()) {
+						address = cursor.getString(0);
+					}
+
+					// 像0591-1515153这种电话号码
+					cursor = openDatabase.rawQuery(
+							"select location from data2 where area = ?",
+							new String[] { number.substring(1, 4) });
+					if (cursor.moveToNext()) {
+						address = cursor.getString(0);
+					}
+
+					cursor.close();
+				}
+
+				break;
+			}
+
+		}
+
+		return address;
+	}
+}
+
+****************
+5.加入文本改变响应效果
+	number_query_et.addTextChangedListener(new TextWatcher() {
+			
+			/**
+			 * 当文本改变时回调
+			 */
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				String number = s.toString();
+				if(!(TextUtils.isEmpty(number))&& number.length() > 6){
+					number_query_tv.setText(NumberQueryUtil.numberQueryDB(number));
+				}
+			}
+			
+			/**
+			 * 当文本改变前回调
+			 */
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			/**
+			 * 当文本改变后回调
+			 */
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+	}
+
+****************
+6.加入输入框抖动效果
+
+Ctrl+H可以搜索文本，文件
+顺藤摸瓜，从文本找到布局文件再找到使用该布局文件的类
+
+ public void onClick(View v) {
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        findViewById(R.id.pw).startAnimation(shake);
+    }
+
+//在本例中，这么写
+	Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+		
+	number_query_et.startAnimation(shake);
+
+*************
+////shake.xml
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="1000"
+    android:fromXDelta="0"
+    //插入器
+    android:interpolator="@anim/cycle_7"
+    android:toXDelta="10" />
+//cycle_7.xml
+<cycleInterpolator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:cycles="7" />
+
+************
+//动画文件apiDemo/View/Animation/Interpolators，在第四天之中有翻译图片
+如果自己想要构造动画，可以使用自定义动画
+	//自定义动画
+//			shake.setInterpolator(new Interpolator() {
+//				
+//				@Override
+//				public float getInterpolation(float input) {
+//					// TODO Auto-generated method stub
+//					return 0;
+//				}
+//			});
+************
+7.加入振动效果
+权限
+    <uses-permission android:name="android.permission.VIBRATE"/>
+实例化
+	private Vibrator vibrator;
+
+		//实例化振动，加权限！
+		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+		
+		//实例化振动，加权限！
+		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+		
+//振动效果
+			//时间
+			vibrator.vibrate(2000);
+			//规律（振动200ms，停200ms，振动300ms，停300ms）
+			long[] pattern = {200,200,300,300};
+			//-1不重复，0循环
+			vibrator.vibrate(pattern, -1);
+
+
+8.2来电号码归属地的查询
+1.需要注册，2.监听来电的服务 3.检测服务是否活着的工具类4.调用该方法
+*************
+1.需要注册，  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+**************
+2.监听来电的服务
+package com.consciencemobilesafe.service;
+
+import com.consciencemobilesafe.utils.NumberQueryUtil;
+
+import android.app.Service;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.IBinder;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.widget.Toast;
+
+public class NumberQueryService extends Service {
+
+	private TelephonyManager tm;
+	private MyListenerPhone mlp;
+	private SharedPreferences sp;
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+
+	private class MyListenerPhone extends PhoneStateListener {
+
+		@Override
+		public void onCallStateChanged(int state, String incomingNumber) {
+			// state 状态，incomingNumber来电号码
+			super.onCallStateChanged(state, incomingNumber);
+			switch (state) {
+			case TelephonyManager.CALL_STATE_RINGING:// 来电铃声响起
+				// 查询数据库操作
+				String address = NumberQueryUtil.numberQueryDB(incomingNumber);
+				Toast.makeText(getApplicationContext(), address, 1).show();
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		// 开启监听
+		tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+		mlp = new MyListenerPhone();
+		sp = getSharedPreferences("config", MODE_PRIVATE);
+
+		// 监听来电的事件
+		tm.listen(mlp, PhoneStateListener.LISTEN_CALL_STATE);
+		
+		Editor editor = sp.edit();
+		editor.putBoolean("number_query", true);
+		editor.commit();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		// 取消监听
+		tm.listen(mlp, PhoneStateListener.LISTEN_NONE);
+		mlp = null;
+		
+		sp = getSharedPreferences("config", MODE_PRIVATE);
+		Editor editor = sp.edit();
+		editor.putBoolean("number_query", true);
+		editor.commit();
+	}
+}
+*************
+3.检测服务是否活着的工具类4.调用该方法
+package com.consciencemobilesafe.utils;
+
+import java.util.List;
+
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.content.Context;
+
+public class ServiceUtil {
+	
+	/**
+	 * 校验某个服务是否还活着
+	 * serviceName需要检测的服务名称
+	 */
+	
+	public boolean isSeriver(Context context,String serviceName){
+		//校验服务是否活着
+		
+		ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+		List<RunningServiceInfo> runningServices = am.getRunningServices(100);
+		for(RunningServiceInfo rsi : runningServices){
+			String name = rsi.service.getClassName();
+			if(serviceName.equals(name)){
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+}
+*************
+4.调用该方法
+ServiceUtil serviceUtil = new ServiceUtil();
+		boolean isOpenService = serviceUtil.isSeriver(this,
+				"com.consciencemobilesafe.service.NumberQueryService");
+	
+
+		if (isOpenService) {
+			siv_number_query.setCheck(true);
+		} else {
+			siv_number_query.setCheck(false);
+		}
+8.3监听去电归属地显示
+
+**********
+1.创建一个广播接收者
+	class OutCallQueryReceiver extends BroadcastReceiver {
+
+		// 该广播接收者需要在该文本中进行注册,在下文中registerReceiver方法
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// 得到打出去的电话号码
+			String phone = getResultData();
+
+			String address = NumberQueryUtil.numberQueryDB(phone);
+			Toast.makeText(context, address, 1).show();
+
+		}
+
+	}
+
+****************
+2.注册及取消监听事件
+//注册监听去电显示事件
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("android.intent.action.NEW_OUTGOING_CALL" );
+		registerReceiver(outPhone, filter);
+
+		//取消注册监听去电显示
+		unregisterReceiver(outPhone);
+**************
+8.4自定义吐司
+1.窗口控件	
+	//窗口控件
+	private WindowManager wm;
+	wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+
+2.自定义吐司方法
+public void myToast(String address) {
+		
+		view = new TextView(getApplicationContext());	
+		view.setText(address);
+		view.setTextSize(22);
+		view.setTextColor(Color.RED);
+		
+		//设置布局文件
+		WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+		
+		params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+		params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+		
+		//无法被点击，无法被触摸。
+		params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|
+				WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE|
+				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+		
+		//半透明
+		params.format = PixelFormat.TRANSLUCENT;
+		
+		//动画
+		//params.windowAnimations = ""
+		
+		//类型
+		params.type = WindowManager.LayoutParams.TYPE_TOAST;
+		
+		
+		//窗口控件中添加上面2个东西
+		wm.addView(view, params);
+	}
+**********
+3.去除吐司
+	case TelephonyManager.CALL_STATE_IDLE://电话的空闲状态:挂电话，来电话，拒绝
+				if(view != null){
+					wm.removeView(view);
+				}
+				break;
+
+4.把吐司变得好看了
+************
+新建一个layout文件
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/sym_call_incoming" />
+
+    <TextView
+        android:id="@+id/show_number_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="归属地" />
+
+</LinearLayout>
+***********
+
+		View view = View.inflate(getApplicationContext(), R.layout.number_show_item_layout, null);
+		TextView textView = (TextView) view.findViewById(R.id.show_number_tv);
+		textView.setText(address);
+		view.setBackgroundResource(R.drawable.call_locate_green);
+		

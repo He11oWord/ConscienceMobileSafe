@@ -33,7 +33,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.3dip"
+        android:layout_height="0.5dip"
         android:layout_below="@id/item_desc"
         android:layout_marginLeft="5dip"
         android:layout_marginRight="5dip"

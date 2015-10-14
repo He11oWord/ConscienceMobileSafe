@@ -51,7 +51,6 @@ public class HomeActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home_layout);
 		
@@ -265,19 +264,16 @@ public class HomeActivity extends Activity {
 			return view;
 		}
 		
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+		
 	
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 	
-		
+		public Object getItem(int position) {
+			return null;
+		}
 
 	
 	}
