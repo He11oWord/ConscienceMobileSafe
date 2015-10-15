@@ -2,14 +2,21 @@ package com.consciencemobilesafe;
 
 import com.consciencemobilesafe.app.R;
 import com.consciencemobilesafe.service.NumberQueryService;
+import com.consciencemobilesafe.ui.NumberQuerySettingItemView;
 import com.consciencemobilesafe.ui.SettingItemView;
 import com.consciencemobilesafe.utils.ServiceUtil;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.text.AlteredCharSequence;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -22,12 +29,14 @@ public class SettingActivity extends Activity {
 	private SettingItemView siv_number_query;
 	private Intent intent = null;
 
-	protected void onResume(){
+	// 设置归属地背景框风格
+	private NumberQuerySettingItemView nqsiv;
+
+	protected void onResume() {
 		super.onResume();
 		ServiceUtil serviceUtil = new ServiceUtil();
 		boolean isOpenService = serviceUtil.isSeriver(this,
 				"com.consciencemobilesafe.service.NumberQueryService");
-	
 
 		if (isOpenService) {
 			siv_number_query.setCheck(true);
@@ -35,7 +44,7 @@ public class SettingActivity extends Activity {
 			siv_number_query.setCheck(false);
 		}
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,11 +82,11 @@ public class SettingActivity extends Activity {
 			}
 		});
 
+		// 设置是否开启归属地查询
 		siv_number_query = (SettingItemView) findViewById(R.id.siv_number_query);
 		ServiceUtil serviceUtil = new ServiceUtil();
 		boolean isOpenService = serviceUtil.isSeriver(this,
 				"com.consciencemobilesafe.service.NumberQueryService");
-	
 
 		if (isOpenService) {
 			siv_number_query.setCheck(true);
@@ -106,6 +115,48 @@ public class SettingActivity extends Activity {
 			}
 		});
 
-	}
+		// 设置背景框风格
+		nqsiv = (NumberQuerySettingItemView) findViewById(R.id.number_setting_style);
 
+		final String[] items = { "半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿" };
+		int number_style = sp.getInt("number_style", 0);
+		nqsiv.setText(items[number_style]);
+
+		nqsiv.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new Builder(SettingActivity.this);
+				builder.setTitle("归属地提示框风格");
+
+				int number_style = sp.getInt("number_style", 0);
+				nqsiv.setText(items[number_style]);
+
+				builder.setTitle("归属地提示框风格");
+
+				// 第一个String数组，第二个是默认选中第几个，三个监听事件
+				builder.setSingleChoiceItems(items, number_style,
+						new DialogInterface.OnClickListener() {
+					
+						
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// 将选中的文本保存
+								Editor edit = sp.edit();
+								edit.putInt("number_style", which);
+								edit.commit();
+								nqsiv.setText(items[which]);
+
+								// 关闭窗口
+								dialog.dismiss();
+							}
+						});
+
+				builder.setNegativeButton("cancle", null);
+				builder.show();
+
+			}
+		});
+
+	}
 }
