@@ -70,6 +70,10 @@ public class HomeActivity extends Activity {
 				case 0 ://进入防盗中心
 					showLostPhoneDialog();
 					break;
+				case 1 :// 进入通讯卫士
+					intent = new Intent(HomeActivity.this,NumberSmsSafeActivity.class);
+					startActivity(intent);
+					break;
 				case 7 ://选中设置中心
 					intent = new Intent(HomeActivity.this,AtoolActivity.class);
 					startActivity(intent);
