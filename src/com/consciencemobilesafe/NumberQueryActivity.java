@@ -96,7 +96,6 @@ public class NumberQueryActivity extends Activity implements OnClickListener {
 //				
 //				@Override
 //				public float getInterpolation(float input) {
-//					// TODO Auto-generated method stub
 //					return 0;
 //				}
 //			});

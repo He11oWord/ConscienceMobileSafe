@@ -22,14 +22,16 @@ import com.consciencemobilesafe.app.R;
 
 public class SelectContactActivity extends Activity {
 
+	private ListView select_contact_list_view;
+	final List<Map<String, String>> data = getContact();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.select_contact_layout);
 
-		ListView select_contact_list_view = (ListView) findViewById(R.id.select_contact_list_view);
-		final List<Map<String, String>> data = getContact();
+		select_contact_list_view = (ListView) findViewById(R.id.select_contact_list_view);
 
 		// 第一个是上下文，第二个是数据，第三个是布局文件，第四个是哪些内容，第五个是这些内容分别对应哪个控件
 		select_contact_list_view.setAdapter(new SimpleAdapter(this, data,

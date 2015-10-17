@@ -1,6 +1,7 @@
 package com.consciencemobilesafe;
 
 import com.consciencemobilesafe.app.R;
+import com.consciencemobilesafe.service.BlackSmsService;
 import com.consciencemobilesafe.service.NumberQueryService;
 import com.consciencemobilesafe.ui.NumberQuerySettingItemView;
 import com.consciencemobilesafe.ui.SettingItemView;
@@ -31,6 +32,7 @@ public class SettingActivity extends Activity {
 
 	// 设置归属地背景框风格
 	private NumberQuerySettingItemView nqsiv;
+	private SettingItemView siv_black_number;
 
 	protected void onResume() {
 		super.onResume();
@@ -43,6 +45,15 @@ public class SettingActivity extends Activity {
 		} else {
 			siv_number_query.setCheck(false);
 		}
+		
+		isOpenService = serviceUtil.isSeriver(this,
+				"com.consciencemobilesafe.service.BlackSmsService");
+		if (isOpenService) {
+			siv_black_number.setCheck(true);
+		} else {
+			siv_black_number.setCheck(false);
+		}
+				
 	}
 
 	@Override
@@ -115,6 +126,39 @@ public class SettingActivity extends Activity {
 			}
 		});
 
+		//设置是否开启黑名单拦截
+		siv_black_number = (SettingItemView) findViewById(R.id.siv_black_number);
+		ServiceUtil serviceUtil_black = new ServiceUtil();
+		boolean isOpenBlackService = serviceUtil_black.isSeriver(this,
+				"com.consciencemobilesafe.service.BlackSmsService");
+
+		if (isOpenBlackService) {
+			siv_black_number.setCheck(true);
+		} else {
+			siv_black_number.setCheck(false);
+		}
+
+		siv_black_number.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (siv_black_number.isChecked()) {
+					// 变成非选中状态
+					siv_black_number.setCheck(false);
+					intent = new Intent(SettingActivity.this,
+							BlackSmsService.class);
+					stopService(intent);
+
+				} else {
+					// 变为选中状态
+					siv_black_number.setCheck(true);
+					intent = new Intent(SettingActivity.this,
+							BlackSmsService.class);
+					startService(intent);
+				}
+			}
+		});
+
 		// 设置背景框风格
 		nqsiv = (NumberQuerySettingItemView) findViewById(R.id.number_setting_style);
 
@@ -137,8 +181,7 @@ public class SettingActivity extends Activity {
 				// 第一个String数组，第二个是默认选中第几个，三个监听事件
 				builder.setSingleChoiceItems(items, number_style,
 						new DialogInterface.OnClickListener() {
-					
-						
+
 							public void onClick(DialogInterface dialog,
 									int which) {
 								// 将选中的文本保存

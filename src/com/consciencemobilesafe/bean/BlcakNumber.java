@@ -19,10 +19,6 @@ public class BlcakNumber {
 	}
 	@Override
 	public String toString() {
-
-		
 		return number +"number,"+mode+"mode";
 	}
-	
-	
 }

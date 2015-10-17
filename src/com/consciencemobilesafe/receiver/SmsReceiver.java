@@ -103,11 +103,7 @@ public class SmsReceiver extends BroadcastReceiver {
 					//�رչ㲥
 					abortBroadcast();
 				}else{
-					Log.i(TAG , "fuck");
-					System.out.println("fuck");
 				}
-				
-				System.out.println("fuck2");
 			}
 			
 			

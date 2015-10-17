@@ -254,7 +254,7 @@ public class HomeActivity extends Activity {
 	
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = View.inflate(HomeActivity.this, R.layout.item_layout, null);
+			View view = View.inflate(HomeActivity.this, R.layout.home_item_layout, null);
 			
 			//使用该view中的findViewById
 			ImageView itemIv = (ImageView) view.findViewById(R.id.item_iv);

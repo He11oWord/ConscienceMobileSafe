@@ -7,7 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
+
 
 import com.consciencemobilesafe.bean.BlcakNumber;
 import com.consciencemobilesafe.db.NumberSmsSafeDBopenDatabase;
@@ -22,7 +22,7 @@ public class BlackNumberDBUtil {
 
 	/**
 	 * 构造方法
-	 * 
+	 * 	
 	 * @param context
 	 * @return
 	 */
@@ -41,17 +41,40 @@ public class BlackNumberDBUtil {
 	public boolean query(String number) {
 		SQLiteDatabase db = nsdb.getReadableDatabase();
 		Cursor cursor = null;
+		boolean result = false;
 		cursor = db.rawQuery("select * from blacknumber where number = ?",
 				new String[] { number });
 
 		if (cursor.moveToNext()) {
-			return true;
+			result = true;
 		}
 		cursor.close();
 		db.close();
-		return false;
+		return result;
 	}
 
+	/**
+	 * 查询某个号码的模式
+	 * @param number
+	 *            查询该号码是否存在
+	 * @return 该号码的模式
+	 */
+	public String queryMode(String number) {
+		SQLiteDatabase db = nsdb.getReadableDatabase();
+		Cursor cursor = null;
+		String result = null;
+		cursor = db.rawQuery("select mode from blacknumber where number = ?",
+				new String[] { number });
+
+		if (cursor.moveToNext()) {
+			result = cursor.getString(0);
+		}
+		cursor.close();
+		db.close();
+		return result;
+	}
+
+	
 	/**
 	 * 插入数据
 	 * 
@@ -84,10 +107,8 @@ public class BlackNumberDBUtil {
 	/**
 	 * 更新数据
 	 * 
-	 * @param number
-	 *            要修改的拉黑号码
-	 * @param mode
-	 *            要修改的拦截模式
+	 * @param number 要修改的拉黑号码
+	 * @param mode 要修改的拦截模式
 	 */
 	public void update(String number, String newmode) {
 		SQLiteDatabase db = nsdb.getWritableDatabase();
@@ -104,22 +125,22 @@ public class BlackNumberDBUtil {
 	 */
 	public List<BlcakNumber> queryAll() {
 		SQLiteDatabase db = nsdb.getReadableDatabase();
-		Cursor cursor = db.rawQuery("select * from blacknumber", null);
-		List<BlcakNumber> list = new ArrayList<BlcakNumber>();
-		
-		if (cursor.moveToNext()) {
-			BlcakNumber info = new BlcakNumber();
+		Cursor cursor = db.rawQuery("select number,mode from blacknumber order by id desc", null);
+		List<BlcakNumber> result = new ArrayList<BlcakNumber>();
+		BlcakNumber info;
+		while(cursor.moveToNext()) {
+			info = new BlcakNumber();
 			String number = cursor.getString(0);
 			String mode = cursor.getString(1);
 			info.setNumber(number);
 			info.setMode(mode);
-			list.add(info);	
+			result.add(info);	
 		
 		}
 		cursor.close();
 		db.close();
 		
-		return list;
+		return result;
 	}
 
 }

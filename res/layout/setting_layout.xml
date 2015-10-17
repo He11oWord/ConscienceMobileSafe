@@ -35,9 +35,17 @@
     <com.consciencemobilesafe.ui.NumberQuerySettingItemView
         android:id="@+id/number_setting_style"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
+        android:layout_height="wrap_content"
         gxut:title="设置号码归属地背景" >
-        >
     </com.consciencemobilesafe.ui.NumberQuerySettingItemView>
+
+    <com.consciencemobilesafe.ui.SettingItemView
+        android:id="@+id/siv_black_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        gxut:desc_off="黑名单拦截已经关闭"
+        gxut:desc_on="黑名单拦截已经开启"
+        gxut:title="设置是否开启黑名单拦截" >
+    </com.consciencemobilesafe.ui.SettingItemView>
 
 </LinearLayout>

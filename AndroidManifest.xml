@@ -56,7 +56,8 @@
         
         <service android:name="com.consciencemobilesafe.service.GPSService" />
         <service android:name="com.consciencemobilesafe.service.NumberQueryService" />
-
+		<service android:name="com.consciencemobilesafe.service.BlackSmsService"/>
+        
         <receiver android:name="com.consciencemobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
