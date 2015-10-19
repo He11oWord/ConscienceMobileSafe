@@ -3,8 +3,8 @@ package com.consciencemobilesafe.test;
 import java.util.List;
 import java.util.Random;
 
-import com.consciencemobilesafe.bean.BlcakNumber;
 import com.consciencemobilesafe.db.NumberSmsSafeDBopenDatabase;
+import com.consciencemobilesafe.domain.BlcakNumberInfo;
 import com.consciencemobilesafe.utils.BlackNumberDBUtil;
 
 import android.test.AndroidTestCase;
@@ -31,8 +31,8 @@ public class BlackNumberDBTest extends AndroidTestCase {
 
 	public void testFindAll()throws Exception{
 		BlackNumberDBUtil b = new BlackNumberDBUtil(getContext());
-		List<BlcakNumber> list = b.queryAll();
-		for(BlcakNumber info :list){
+		List<BlcakNumberInfo> list = b.queryAll();
+		for(BlcakNumberInfo info :list){
 			Log.d("haha",  info.getNumber()+"number,"+info.getMode()+"mode");
 		}
 		

@@ -8,9 +8,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-
-import com.consciencemobilesafe.bean.BlcakNumber;
 import com.consciencemobilesafe.db.NumberSmsSafeDBopenDatabase;
+import com.consciencemobilesafe.domain.BlcakNumberInfo;
 
 public class BlackNumberDBUtil {
 
@@ -22,7 +21,7 @@ public class BlackNumberDBUtil {
 
 	/**
 	 * 构造方法
-	 * 	
+	 * 
 	 * @param context
 	 * @return
 	 */
@@ -55,6 +54,7 @@ public class BlackNumberDBUtil {
 
 	/**
 	 * 查询某个号码的模式
+	 * 
 	 * @param number
 	 *            查询该号码是否存在
 	 * @return 该号码的模式
@@ -74,7 +74,6 @@ public class BlackNumberDBUtil {
 		return result;
 	}
 
-	
 	/**
 	 * 插入数据
 	 * 
@@ -107,8 +106,10 @@ public class BlackNumberDBUtil {
 	/**
 	 * 更新数据
 	 * 
-	 * @param number 要修改的拉黑号码
-	 * @param mode 要修改的拦截模式
+	 * @param number
+	 *            要修改的拉黑号码
+	 * @param mode
+	 *            要修改的拦截模式
 	 */
 	public void update(String number, String newmode) {
 		SQLiteDatabase db = nsdb.getWritableDatabase();
@@ -121,25 +122,66 @@ public class BlackNumberDBUtil {
 
 	/**
 	 * 查询所有数据
+	 * 
 	 * @return 一个所有数据的集合
 	 */
-	public List<BlcakNumber> queryAll() {
+	public List<BlcakNumberInfo> queryAll() {
 		SQLiteDatabase db = nsdb.getReadableDatabase();
-		Cursor cursor = db.rawQuery("select number,mode from blacknumber order by id desc", null);
-		List<BlcakNumber> result = new ArrayList<BlcakNumber>();
-		BlcakNumber info;
-		while(cursor.moveToNext()) {
-			info = new BlcakNumber();
+		Cursor cursor = db.rawQuery(
+				"select number,mode from blacknumber order by id desc", null);
+		List<BlcakNumberInfo> result = new ArrayList<BlcakNumberInfo>();
+		BlcakNumberInfo info;
+		while (cursor.moveToNext()) {
+			info = new BlcakNumberInfo();
 			String number = cursor.getString(0);
 			String mode = cursor.getString(1);
 			info.setNumber(number);
 			info.setMode(mode);
-			result.add(info);	
-		
+			result.add(info);
+
 		}
 		cursor.close();
 		db.close();
-		
+
+		return result;
+	}
+
+	
+
+	/**
+	 * 查询部分数据
+	 * 
+	 * @param partNumber
+	 *            一次获取多少条记录
+	 * @param partLocation
+	 *            从哪个位置开始获取
+	 * @return 一个所有数据的集合
+	 */
+	public List<BlcakNumberInfo> queryPart(int partNumber,int partLocation) {
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		SQLiteDatabase db = nsdb.getReadableDatabase();
+		Cursor cursor = db
+				.rawQuery(
+						"select number,mode from blacknumber order by id desc limit ? offset ?",
+						new String[] { String.valueOf(partNumber),String.valueOf(partLocation)});
+		List<BlcakNumberInfo> result = new ArrayList<BlcakNumberInfo>();
+		BlcakNumberInfo info;
+		while (cursor.moveToNext()) {
+			info = new BlcakNumberInfo();
+			String number = cursor.getString(0);
+			String mode = cursor.getString(1);
+			info.setNumber(number);
+			info.setMode(mode);
+			result.add(info);
+
+		}
+		cursor.close();
+		db.close();
+
 		return result;
 	}
 

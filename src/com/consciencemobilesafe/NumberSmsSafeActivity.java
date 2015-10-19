@@ -3,7 +3,7 @@ package com.consciencemobilesafe;
 import java.util.List;
 
 import com.consciencemobilesafe.app.R;
-import com.consciencemobilesafe.bean.BlcakNumber;
+import com.consciencemobilesafe.domain.BlcakNumberInfo;
 import com.consciencemobilesafe.service.BlackSmsService;
 import com.consciencemobilesafe.utils.BlackNumberDBUtil;
 
@@ -16,17 +16,23 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,31 +40,101 @@ public class NumberSmsSafeActivity extends Activity {
 
 	private ListView number_sms_safe_lv;
 	private BlackNumberListAdapter adapter;
-	private List<BlcakNumber> infos;
+	private List<BlcakNumberInfo> infos;
 	private BlackNumberDBUtil b;
 
-	//private Button button = (Button) findViewById(R.id.button);
-	public void button(View view){
-		Intent intent = new Intent(this,BlackSmsService.class);
-		startService(intent);
-	
-	}
+	// 查询部分黑名单所用的2个参数
+	private int partLocation = 0;
+	private int partNumber = 0;
+
+	// 进度条
+	private ProgressBar pb;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.number_sms_safe_layout);
 		number_sms_safe_lv = (ListView) findViewById(R.id.number_sms_safe_listview);
+		pb = (ProgressBar) findViewById(R.id.number_safe_pb);
 		b = new BlackNumberDBUtil(this);
-		infos = b.queryAll();
-		adapter = new BlackNumberListAdapter();
+		final int max = b.queryAll().size();
+		partNumber = 20;
+		// 查询黑名单
+		queryB();
 
-		number_sms_safe_lv.setAdapter(adapter);
+		// 给listview设置一个滚动事件的监听器
+		number_sms_safe_lv.setOnScrollListener(new OnScrollListener() {
+
+			// 滚动状态发生变化的时候调用该方法
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				switch (scrollState) {
+
+				case OnScrollListener.SCROLL_STATE_IDLE:// 空闲状态
+					int lastLocation = view.getLastVisiblePosition();
+					if (lastLocation == infos.size() - 1) {
+						partNumber += 20;
+						if (partNumber > max) {
+							Toast.makeText(NumberSmsSafeActivity.this, "到底了", 0)
+									.show();
+						} else {
+							queryB();
+						}
+					}
+
+					break;
+				case OnScrollListener.SCROLL_STATE_FLING:// 滑行状态，手指不在屏幕上
+					break;
+				case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:// 手指触摸滑行
+					break;
+				}
+
+			}
+
+			// 滚动的时候调用该方法
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+
+			}
+		});
 
 	}
 
+	/**
+	 * 查询黑名单号码的方法
+	 */
+	private void queryB() {
+		// 查询部分的黑名单内容
+		pb.setVisibility(View.VISIBLE);
+		new Thread() {
+			public void run() {
 
+				runOnUiThread(new Runnable() {
 
+					@Override
+					public void run() {
+						pb.setVisibility(View.INVISIBLE);
+						infos = b.queryPart(partNumber, partLocation);
+						if (adapter == null) {
+							adapter = new BlackNumberListAdapter();
+							number_sms_safe_lv.setAdapter(adapter);
+						} else {
+							adapter.notifyDataSetChanged();
+						}
+					}
+				});
+
+			}
+
+		}.start();
+	}
+
+	/**
+	 * ListView的适配器
+	 * 
+	 */
 	class BlackNumberListAdapter extends BaseAdapter {
 
 		public int getCount() {
@@ -179,8 +255,9 @@ public class NumberSmsSafeActivity extends Activity {
 	private CheckBox phone_cb;
 	private TextView blackNumber_et;
 	private AlertDialog dialog;
+
 	// 短信接收器
-	
+
 	public void addBlackNumber(View view) {
 		AlertDialog.Builder builder = new Builder(this);
 		dialog = builder.create();
@@ -242,7 +319,7 @@ public class NumberSmsSafeActivity extends Activity {
 				b.insert(number, mode);
 
 				// 将该属性添加至集合里面
-				BlcakNumber info = new BlcakNumber();
+				BlcakNumberInfo info = new BlcakNumberInfo();
 				info.setNumber(number);
 				info.setMode(mode);
 				infos.add(0, info);
@@ -256,5 +333,4 @@ public class NumberSmsSafeActivity extends Activity {
 		});
 	}
 
-	
 }

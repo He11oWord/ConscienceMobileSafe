@@ -55,7 +55,8 @@
         <activity android:name="com.consciencemobilesafe.SelectContactActivity" />
         <activity android:name="com.consciencemobilesafe.AtoolActivity" />
         <activity android:name="com.consciencemobilesafe.NumberQueryActivity" />
-        <activity android:name="com.consciencemobilesafe.NumberSmsSafeActivity"></activity>
+        <activity android:name="com.consciencemobilesafe.NumberSmsSafeActivity"/>
+        <activity android:name="com.consciencemobilesafe.APPManagerActivity"/>
         
         <uses-library android:name="android.test.runner" />
         

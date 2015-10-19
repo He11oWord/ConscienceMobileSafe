@@ -77,7 +77,7 @@ public class SplashActivity extends Activity {
 				public void run() {
 					enterName();
 				}
-			}, 3000);
+			}, 1000);
 
 		}
 
