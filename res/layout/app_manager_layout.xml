@@ -37,21 +37,30 @@
         </TextView>
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tv_gun"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="用户程序(6)"
+        android:textSize="18dip" 
+        android:background="#ff0000"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
         <ProgressBar
-            android:id="@+id/number_safe_pb"
+            android:id="@+id/app_manager_pb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="invisible" />
 
         <ListView
-            android:id="@+id/number_sms_safe_listview"
+            android:id="@+id/app_manager_listview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:fastScrollEnabled="true" >
         </ListView>
     </RelativeLayout>
 

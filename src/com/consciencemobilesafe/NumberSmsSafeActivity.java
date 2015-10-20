@@ -256,8 +256,10 @@ public class NumberSmsSafeActivity extends Activity {
 	private TextView blackNumber_et;
 	private AlertDialog dialog;
 
-	// 短信接收器
-
+	/**
+	 * 添加黑名单号码
+	 * @param view
+	 */
 	public void addBlackNumber(View view) {
 		AlertDialog.Builder builder = new Builder(this);
 		dialog = builder.create();

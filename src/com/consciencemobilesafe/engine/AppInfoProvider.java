@@ -2,7 +2,7 @@ package com.consciencemobilesafe.engine;
 
 import java.util.List;
 
-import com.consciencemobilesafe.domian.AppInfo;
+import com.consciencemobilesafe.domain.AppInfo;
 
 /**
  * 业务方法，提供手机里面安装的所有应用的应用程序信息

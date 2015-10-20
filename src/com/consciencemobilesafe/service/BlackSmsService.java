@@ -78,7 +78,6 @@ public class BlackSmsService extends Service {
 	/**
 	 * 用来观察数据库是否发生变化
 	 * 有变化就执行删除记录的方法
-	 * @author 钊
 	 *
 	 */
 	private class CallObserver extends ContentObserver {
@@ -123,8 +122,6 @@ public class BlackSmsService extends Service {
 
 	/**
 	 * 拦截短信的广播
-	 * 
-	 * @author 钊
 	 * 
 	 */
 	private class BlackSmsReceiver extends BroadcastReceiver {

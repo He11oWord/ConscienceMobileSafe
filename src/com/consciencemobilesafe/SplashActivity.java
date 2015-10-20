@@ -36,7 +36,6 @@ import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
-@SuppressLint("ShowToast")
 public class SplashActivity extends Activity {
 	protected static final String TAG = "SplashActivity";
 	protected static final int ENTER_HOME = 0;
@@ -309,10 +308,5 @@ public class SplashActivity extends Activity {
 		finish();
 	}
 
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.splash, menu);
-		return true;
-	}
-
+	
 }
