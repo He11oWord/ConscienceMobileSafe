@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dip"
+    android:descendantFocusability="blocksDescendants">"
+
+    <ImageView
+        android:id="@+id/task_manager_lv_item_iv"
+        android:layout_width="50dip"
+        android:layout_height="55dip"
+        android:layout_centerVertical="true"
+        android:src="@android:drawable/ic_dialog_email" />
+
+    <TextView
+        android:id="@+id/task_manager_lv_item_tv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dip"
+        android:layout_marginTop="3dip"
+        android:layout_toRightOf="@+id/task_manager_lv_item_iv"
+        android:text="应用程序名称"
+        android:textSize="22dip" />
+
+    <TextView
+        android:id="@+id/task_manager_lv_item_tv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/task_manager_lv_item_tv1"
+        android:layout_marginBottom="2dip"
+        android:layout_marginLeft="5dip"
+        android:layout_toRightOf="@+id/task_manager_lv_item_iv"
+        android:text="安装位置"
+        android:textSize="18dip" />
+
+    <CheckBox
+        android:id="@+id/task_manager_lv_item_cb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="3dip" 
+        android:focusable="false"/>
+
+</RelativeLayout>

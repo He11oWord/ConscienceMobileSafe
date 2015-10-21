@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.Menu;
 import android.view.animation.AlphaAnimation;
@@ -58,7 +59,7 @@ public class SplashActivity extends Activity {
 		TextView splash_text = (TextView) findViewById(R.id.splash_text);
 		splash_text.setText("版本号:" + getVersionCode());
 		sp = getSharedPreferences("config", MODE_PRIVATE);
-
+		installShortCut();
 		// path是数据库的地址，数据库放在assets文件夹中，无法进行读取。
 		// 解决办法是将数据库文件拷贝到/data/data/<包名>/files/adress.db下，该操作在初始化页面中实现
 		// 在NumberQueryUtil.JAVA
@@ -97,11 +98,11 @@ public class SplashActivity extends Activity {
 
 		try {
 			File file = new File(getFilesDir(), "address.db");
-			
-			//判断文件是否存在
-			if(file.exists() && file.length()>0){
+
+			// 判断文件是否存在
+			if (file.exists() && file.length() > 0) {
 				Toast.makeText(this, "文件已存在", 0).show();
-			}else{
+			} else {
 				Toast.makeText(this, "文件不存在", 0).show();
 				InputStream is = getAssets().open("address.db");
 				FileOutputStream fos = new FileOutputStream(file);
@@ -109,14 +110,15 @@ public class SplashActivity extends Activity {
 				int len = 0;
 				while ((len = is.read(buffer)) != -1) {
 					fos.write(buffer, 0, len);
-					
+
 				}
-				
+
 				is.close();
 				fos.close();
 			}
 		} catch (IOException e) {
-			Toast.makeText(this, "方法错误", 0).show();;
+			Toast.makeText(this, "方法错误", 0).show();
+			;
 			e.printStackTrace();
 
 		}
@@ -308,5 +310,28 @@ public class SplashActivity extends Activity {
 		finish();
 	}
 
-	
+	/**
+	 * 安装桌面快捷方式
+	 */
+	private void installShortCut() {
+		// 发送广播意图
+		Intent intent = new Intent();
+		intent.setAction("com.android.luncher.action.INSTALL_SHORTCUT");
+		// 快捷方式，包括下面三个信息1.名字2.图标3.做什么事情
+		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "良心手机卫士");
+		intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapFactory
+				.decodeResource(getResources(), R.drawable.ic_launcher));
+
+		// 快捷方式的意图
+		Intent shortcutIntent = new Intent();
+		shortcutIntent.setAction("android.intent.action.MAIN");
+		shortcutIntent.addCategory("android.intent.category.LAUNCHER");
+		shortcutIntent.setClassName(getPackageName(),
+				"com.consciencemobilesafe.SplashActivity");
+		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+
+		sendBroadcast(intent);
+		Log.d("sadsad", "dsadasdhj");
+	}
+
 }

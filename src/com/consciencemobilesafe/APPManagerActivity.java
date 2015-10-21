@@ -169,7 +169,7 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 				// 取消显示悬浮窗
 				dismissPupopWindow();
 
-				Log.d("", info.getPackName());
+				
 				View tempView = view.inflate(getApplicationContext(),
 						R.layout.ap_manager_pupop_item, null);
 				pw = new PopupWindow(tempView, -2,
@@ -257,7 +257,10 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 
 		}.start();
 	}
-
+	
+	/**
+	 * 取消显示悬浮框
+	 */
 	private void dismissPupopWindow() {
 		if (pw != null && pw.isShowing()) {
 			pw.dismiss();
@@ -267,7 +270,6 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 
 	/**
 	 * 适配器
-	 * 
 	 */
 	class APPListAdapter extends BaseAdapter {
 
