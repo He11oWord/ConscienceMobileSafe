@@ -31,7 +31,7 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
-    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <application
         android:allowBackup="true"
@@ -60,12 +60,15 @@
         <activity android:name="com.consciencemobilesafe.NumberSmsSafeActivity" />
         <activity android:name="com.consciencemobilesafe.APPManagerActivity" />
         <activity android:name="com.consciencemobilesafe.TaskManagerActivity" />
+        <activity android:name="com.consciencemobilesafe.TaskManagerSettingActivity" />
 
         <uses-library android:name="android.test.runner" />
 
         <service android:name="com.consciencemobilesafe.service.GPSService" />
         <service android:name="com.consciencemobilesafe.service.NumberQueryService" />
         <service android:name="com.consciencemobilesafe.service.BlackSmsService" />
+        <service android:name="com.consciencemobilesafe.service.TaskManagerLockCleanService" />
+        <service android:name="com.consciencemobilesafe.service.UpdateWidgetService" />
 
         <receiver android:name="com.consciencemobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter>
@@ -88,6 +91,22 @@
 
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.consciencemobilesafe.receiver.MyWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/process_widget_provider" />
+        </receiver>
+        
+        <receiver android:name="com.consciencemobilesafe.receiver.WidgetCleanReceiver">
+              <intent-filter>
+                <action android:name="com.consciencemobilesafe.clean" />
+                						
             </intent-filter>
         </receiver>
     </application>

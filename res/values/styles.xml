@@ -50,5 +50,8 @@
         <item name="android:onClick">back</item>
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-
+  <style name="widget_text">
+        <item name="android:textSize">16.0dip</item>
+        <item name="android:textColor">#ff000000</item>
+    </style>
 </resources>

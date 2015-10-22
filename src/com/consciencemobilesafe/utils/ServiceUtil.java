@@ -6,6 +6,10 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 
+/**
+ * 校验某个服务是否还活着
+ * serviceName需要检测的服务名称
+ */
 public class ServiceUtil {
 	
 	/**

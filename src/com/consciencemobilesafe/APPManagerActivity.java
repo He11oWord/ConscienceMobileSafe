@@ -7,6 +7,7 @@ import java.util.List;
 import com.consciencemobilesafe.app.R;
 import com.consciencemobilesafe.domain.AppInfo;
 import com.consciencemobilesafe.utils.AppInfoProvider;
+import com.consciencemobilesafe.utils.AppLockDBUtil;
 import com.consciencemobilesafe.utils.DensityUtil;
 
 import android.R.color;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -37,6 +39,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -89,6 +92,8 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 	 */
 	private AppInfo info;
 
+	private AppLockDBUtil al;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.app_manager_layout);
@@ -104,6 +109,8 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 		sdcard_tv.setText("sdcard可用为:"
 				+ Formatter.formatFileSize(this, getAvailSpace(Environment
 						.getExternalStorageDirectory().getAbsolutePath())));
+
+		al = new AppLockDBUtil(this);
 
 		// 下面是更新listView的操作
 		pb = (ProgressBar) findViewById(R.id.app_manager_pb);
@@ -169,7 +176,6 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 				// 取消显示悬浮窗
 				dismissPupopWindow();
 
-				
 				View tempView = view.inflate(getApplicationContext(),
 						R.layout.ap_manager_pupop_item, null);
 				pw = new PopupWindow(tempView, -2,
@@ -216,6 +222,40 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 
 		});
 
+		// 设置listView的长点击事件
+		// 返回的布尔值代表是否会被其他控件接着响应
+		appInfo_lv.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				// 判断被点击的条目位置，返回app信息
+				if (position == (userAppList.size())) {
+					return true;
+				} else if (position < userAppList.size()) {
+					int newPosition = position;
+					info = (AppInfo) userAppList.get(newPosition);
+				} else {
+					int newPosition = position - userAppList.size() - 1;
+					info = (AppInfo) sysAppList.get(newPosition);
+				}
+
+				Log.d("", info.toString());
+				ViewHolder viewHolder;
+				viewHolder = (ViewHolder) view.getTag();
+				// 判断是否锁上了
+				if (al.query(info.getPackName())) {
+					viewHolder.iv2.setImageResource(R.drawable.unlock);
+					al.delete(info.getPackName());
+				} else {
+					viewHolder.iv2.setImageResource(R.drawable.lock);
+					al.insert(info.getPackName());
+				}
+
+				return true;
+			}
+		});
 	}
 
 	/**
@@ -257,7 +297,7 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 
 		}.start();
 	}
-	
+
 	/**
 	 * 取消显示悬浮框
 	 */
@@ -317,7 +357,10 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 						.findViewById(R.id.app_manager_lv_item_tv1);
 				viewHolder.tv2 = (TextView) view
 						.findViewById(R.id.app_manager_lv_item_tv2);
+				viewHolder.iv2 = (ImageView) view
+						.findViewById(R.id.app_manager_lv_item_iv2);
 				view.setTag(viewHolder);
+
 			}
 
 			viewHolder.iv.setImageDrawable(info.getIcon());
@@ -326,6 +369,13 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 				viewHolder.tv2.setText("手机内存");
 			} else {
 				viewHolder.tv2.setText("外部存储");
+			}
+
+			// 判断是否锁上了
+			if (al.query(info.getPackName())) {
+				viewHolder.iv2.setImageResource(R.drawable.lock);
+			} else {
+				viewHolder.iv2.setImageResource(R.drawable.unlock);
 			}
 
 			return view;
@@ -348,7 +398,7 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 		private TextView tv2;
 		private ImageView iv;
 		private Button b;
-
+		private ImageView iv2;
 	}
 
 	/**
@@ -376,9 +426,9 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 			startApplication();
 			break;
 		case R.id.app_manager_pupop_uninstall:
-			if(info.isUserApp()){
-				unistallApk();				
-			}else{
+			if (info.isUserApp()) {
+				unistallApk();
+			} else {
 				Toast.makeText(getApplicationContext(), "系统级别应用", 0).show();
 			}
 			break;
@@ -392,11 +442,11 @@ public class APPManagerActivity extends Activity implements OnClickListener {
 	 * 分享软件
 	 */
 	private void shareApplication() {
-		Intent intent =new Intent();
+		Intent intent = new Intent();
 		intent.setAction("android.intent.action.SEND");
 		intent.addCategory(Intent.CATEGORY_DEFAULT);
 		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, "推荐给你一款软件，名字叫做："+info.getName());
+		intent.putExtra(Intent.EXTRA_TEXT, "推荐给你一款软件，名字叫做：" + info.getName());
 		startActivity(intent);
 	}
 

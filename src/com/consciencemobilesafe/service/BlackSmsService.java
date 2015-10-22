@@ -46,11 +46,10 @@ public class BlackSmsService extends Service {
 	/**
 	 * 电话监听,拦截黑名单电话
 	 * 
-	 * @author 钊
 	 * 
 	 */
 	private class PListener extends PhoneStateListener {
-
+ 
 		@Override
 		public void onCallStateChanged(int state, String incomingNumber) {
 			// state 状态，incomingNumber来电号码

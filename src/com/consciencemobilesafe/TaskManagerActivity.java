@@ -15,6 +15,10 @@ import com.consciencemobilesafe.utils.TaskManagerUtil;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -60,23 +64,19 @@ public class TaskManagerActivity extends Activity {
 	// 保存是否被点击了
 	private SharedPreferences sp;
 
+	private TextView number_tv;
+
+	private TextView ram_tv;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.task_manager_layout);
 
-		TextView number_tv = (TextView) findViewById(R.id.task_manager_tv1);
-		TextView ram_tv = (TextView) findViewById(R.id.task_manager_tv2);
-		List<RunningAppProcessInfo> runningAppProcesses = TaskManagerUtil
-				.getRunningAppProcesses(this);
-		int number_text = runningAppProcesses.size();
-		number_tv.setText("进程数量:" + number_text);
-		String totalMem = Formatter.formatFileSize(this, tmu.getTotalMem(this));
-		String aVilMem = Formatter.formatFileSize(this, tmu.getAVilMem(this));
-
-		String ram_text = "剩余内存" + aVilMem + "/" + totalMem;
-		ram_tv.setText(ram_text);
+		number_tv = (TextView) findViewById(R.id.task_manager_tv1);
+		ram_tv = (TextView) findViewById(R.id.task_manager_tv2);
+		
 		// Toast.makeText(this, "221", 0).show();
 
 		tv_gun = (TextView) findViewById(R.id.tv_gun);
@@ -85,7 +85,8 @@ public class TaskManagerActivity extends Activity {
 		sp = getSharedPreferences("config", MODE_PRIVATE);
 		taskInfoProvider = new TaskInfoProvider();
 		resetListView();
-
+		
+		
 		// 设置ListView的滚动事件
 		taskInfo_lv.setOnScrollListener(new OnScrollListener() {
 
@@ -118,7 +119,6 @@ public class TaskManagerActivity extends Activity {
 						});
 					}
 				}
-
 			}
 		});
 
@@ -140,6 +140,9 @@ public class TaskManagerActivity extends Activity {
 					info = (TaskInfo) sysTaskList.get(newPosition);
 				}
 				ViewHolder viewHolder = (ViewHolder) view.getTag();
+				if (info.getPackageName().equals(getPackageName())) {
+					return;
+				}
 				if (info.isCheck()) {
 					viewHolder.cb.setChecked(false);
 					info.setCheck(false);
@@ -151,6 +154,18 @@ public class TaskManagerActivity extends Activity {
 		});
 	}
 
+	private void resetRam() {
+		int runningAppProcesses = TaskManagerUtil
+				.getRunningAppProcesses(TaskManagerActivity.this);
+		int number_text = runningAppProcesses - 2;
+		number_tv.setText("进程数量:" + number_text);
+		String totalMem = Formatter.formatFileSize(this, tmu.getTotalMem(this));
+		String aVilMem = Formatter.formatFileSize(this, tmu.getAVilMem(this));
+
+		String ram_text = "剩余内存" + aVilMem + "/" + totalMem;
+		ram_tv.setText(ram_text);
+	}
+
 	/**
 	 * 进程适配器
 	 */
@@ -158,7 +173,12 @@ public class TaskManagerActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			return userTaskList.size() + sysTaskList.size() + 1;
+			if (sp.getBoolean("task_manager_see_sys_task", false)) {
+				return userTaskList.size();
+			} else {
+				return userTaskList.size() + sysTaskList.size() + 1;
+
+			}
 		}
 
 		@Override
@@ -215,8 +235,9 @@ public class TaskManagerActivity extends Activity {
 							info.getUseRam()));
 
 			viewHolder.cb.setChecked(info.isCheck());
-			//
-
+			if (info.getPackageName().equals(getPackageName())) {
+				viewHolder.cb.setVisibility(View.INVISIBLE);
+			}
 			return view;
 		}
 
@@ -267,6 +288,7 @@ public class TaskManagerActivity extends Activity {
 						sysTaskList.add(info);
 					}
 				}
+			
 				runOnUiThread(new Runnable() {
 
 					@Override
@@ -279,6 +301,7 @@ public class TaskManagerActivity extends Activity {
 							adapter.notifyDataSetChanged();
 						}
 						pb.setVisibility(View.INVISIBLE);
+						resetRam();
 					}
 				});
 			}
@@ -291,7 +314,12 @@ public class TaskManagerActivity extends Activity {
 	 */
 	public void selectAll(View view) {
 		for (TaskInfo ti : taskList) {
+			if (ti.getPackageName().equals(getPackageName())) {
+				continue;
+
+			}
 			ti.setCheck(true);
+
 		}
 		adapter.notifyDataSetChanged();
 	}
@@ -301,6 +329,9 @@ public class TaskManagerActivity extends Activity {
 	 */
 	public void selectOther(View view) {
 		for (TaskInfo ti : taskList) {
+			if (ti.getPackageName().equals(getPackageName())) {
+				continue;
+			}
 			ti.setCheck(!ti.isCheck());
 		}
 		adapter.notifyDataSetChanged();
@@ -310,6 +341,9 @@ public class TaskManagerActivity extends Activity {
 	 * 设置
 	 */
 	public void setting(View view) {
+		Intent intent = new Intent(getApplicationContext(),
+				TaskManagerSettingActivity.class);
+		startActivityForResult(intent, 0);
 
 	}
 
@@ -318,12 +352,61 @@ public class TaskManagerActivity extends Activity {
 	 */
 	public void clean(View view) {
 		ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+		int count = 0;
+		long size = 0;
+
+		List<TaskInfo> killedTask = new ArrayList<TaskInfo>();
 		for (TaskInfo ti : taskList) {
 			if (ti.isCheck()) {
 				activityManager.killBackgroundProcesses(ti.getPackageName());
+				if (ti.isUserTask()) {
+					userTaskList.remove(ti);
+				} else {
+					sysTaskList.remove(ti);
+				}
+				count++;
+				killedTask.add(ti);
+				size += ti.getUseRam();
 			}
 		}
-		resetListView();
+		taskList.remove(killedTask);
+		String sizes = Formatter.formatFileSize(getApplicationContext(), size);
+		adapter.notifyDataSetChanged();
+		String text = "共关闭了" + count + "个进程，" + "释放了" + sizes + "的内存";
+		Toast.makeText(getApplicationContext(), text, 0).show();
 
+		int runningAppProcesses = TaskManagerUtil
+				.getRunningAppProcesses(TaskManagerActivity.this);
+		int number_text = runningAppProcesses - count - 2;
+		if (number_text < 1) {
+			number_text = 1;
+		}
+		number_tv.setText("进程数量:" + number_text);
+		String totalMem = Formatter.formatFileSize(this, tmu.getTotalMem(this));
+		String aVilMem = Formatter.formatFileSize(this, tmu.getAVilMem(this)
+				- size);
+
+		String ram_text = "剩余内存" + aVilMem + "/" + totalMem;
+		ram_tv.setText(ram_text);
 	}
+	
+	@Override
+	protected void onResume() {
+		// resetListView();
+		super.onResume();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		adapter.notifyDataSetChanged();
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+//	class widgetKill extends BroadcastReceiver{
+//
+//		public void onReceive(Context context, Intent intent) {
+//			Log.d("", "sdasidhsiadioasdiosndinasoids");		
+//		}
+//		
+//	}
 }

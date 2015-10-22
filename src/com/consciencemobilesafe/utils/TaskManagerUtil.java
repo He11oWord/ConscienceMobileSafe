@@ -26,13 +26,13 @@ public class TaskManagerUtil {
 	 * @param context
 	 * @return 正在运行的列表
 	 */
-	public static List<RunningAppProcessInfo> getRunningAppProcesses(
+	public static int getRunningAppProcesses(
 			Context context) {
 		ActivityManager am = (ActivityManager) context
 				.getSystemService(context.ACTIVITY_SERVICE);
 		List<RunningAppProcessInfo> runningAppProcesses = am
 				.getRunningAppProcesses();
-		return runningAppProcesses;
+		return runningAppProcesses.size();
 	}
 
 	/**
