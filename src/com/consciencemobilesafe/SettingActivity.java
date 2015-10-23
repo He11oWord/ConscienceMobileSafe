@@ -3,6 +3,7 @@ package com.consciencemobilesafe;
 import com.consciencemobilesafe.app.R;
 import com.consciencemobilesafe.service.BlackSmsService;
 import com.consciencemobilesafe.service.NumberQueryService;
+import com.consciencemobilesafe.service.WatchDogService;
 import com.consciencemobilesafe.ui.NumberQuerySettingItemView;
 import com.consciencemobilesafe.ui.SettingItemView;
 import com.consciencemobilesafe.utils.ServiceUtil;
@@ -33,6 +34,7 @@ public class SettingActivity extends Activity {
 	// 设置归属地背景框风格
 	private NumberQuerySettingItemView nqsiv;
 	private SettingItemView siv_black_number;
+	private SettingItemView siv_watch_dog;
 
 	protected void onResume() {
 		super.onResume();
@@ -201,5 +203,37 @@ public class SettingActivity extends Activity {
 			}
 		});
 
+		//是否开启程序锁
+		siv_watch_dog = (SettingItemView) findViewById(R.id.siv_watch_dog);
+		ServiceUtil serviceUtil1 = new ServiceUtil();
+		boolean isOpenWatchService = serviceUtil1.isSeriver(this,
+				"com.consciencemobilesafe.service.WatchDogService");
+
+		if (isOpenWatchService) {
+			siv_watch_dog.setCheck(true);
+		} else {
+			siv_watch_dog.setCheck(false);
+		}
+		
+		siv_watch_dog.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (siv_watch_dog.isChecked()) {
+					// 变成非选中状态
+					siv_watch_dog.setCheck(false);
+					intent = new Intent(SettingActivity.this,
+							WatchDogService.class);
+					stopService(intent);
+
+				} else {
+					// 变为选中状态
+					siv_watch_dog.setCheck(true);
+					intent = new Intent(SettingActivity.this,
+							WatchDogService.class);
+					startService(intent);
+				}
+			}
+		});
 	}
 }

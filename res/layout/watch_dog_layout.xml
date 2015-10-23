@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dip"
+    android:layout_height="match_parent" >
+    
+     <TextView 
+        android:layout_centerHorizontal="true"
+        android:layout_width="250dip"
+        android:layout_height="40dip"
+        android:id="@+id/watch_dog_title"
+        android:text="请输入密码"
+        android:gravity="center"
+        android:textSize="25sp"
+        />
+    <TextView 
+        android:layout_centerHorizontal="true"
+        android:layout_width="250dip"
+        android:layout_height="40dip"
+        android:id="@+id/watch_dog_tv"
+        android:text="请输入密码"
+        android:gravity="center"
+        android:textSize="25sp"
+            android:layout_below="@id/watch_dog_title"
+        />
+ 
+    
+	<EditText 
+	    android:layout_centerHorizontal="true"
+	    android:layout_below="@id/watch_dog_tv"
+	    android:layout_width="250dip"
+        android:layout_height="40dip"
+        android:id="@+id/watch_dog_et"
+        android:inputType="textPassword"
+        android:hint="请输入密码"
+        />
+	
+	<Button
+	    android:layout_below="@id/watch_dog_et"
+	    android:layout_width="100dip"
+        android:layout_height="40dip"
+        android:id="@+id/watch_dog_ok"
+        android:layout_marginLeft="20dip"
+        android:text="确认"
+        />
+
+	<Button
+	    android:text="取消"
+	    android:id="@+id/watch_dog_cancel"
+	    android:layout_width="100dip"
+	    android:layout_height="40dip"
+	    android:layout_below="@+id/watch_dog_et"
+	    android:layout_marginLeft="30dp"
+	    android:layout_toRightOf="@+id/watch_dog_ok" />
+
+</RelativeLayout>

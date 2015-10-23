@@ -35,7 +35,6 @@ public class TaskManagerLockCleanService extends Service{
 		IntentFilter filter = new IntentFilter(
 				Intent.ACTION_SCREEN_OFF);
 		registerReceiver(lc, filter);
-		System.out.println("开启监听服务");
 		super.onCreate();
 	}
 	
@@ -56,7 +55,7 @@ public class TaskManagerLockCleanService extends Service{
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			
-			Log.d("sdsada", "锁屏了");
+			
 			//清理手机进程
 			
 			List<RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();

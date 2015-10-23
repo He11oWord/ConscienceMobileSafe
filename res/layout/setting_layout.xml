@@ -48,4 +48,13 @@
         gxut:title="设置是否开启黑名单拦截" >
     </com.consciencemobilesafe.ui.SettingItemView>
 
+    <com.consciencemobilesafe.ui.SettingItemView
+        android:id="@+id/siv_watch_dog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        gxut:desc_off="程序锁已经关闭"
+        gxut:desc_on="程序锁已经开启"
+        gxut:title="是否开启程序锁定" >
+    </com.consciencemobilesafe.ui.SettingItemView>
+
 </LinearLayout>

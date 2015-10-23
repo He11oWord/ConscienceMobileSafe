@@ -34,6 +34,7 @@ public class AppInfoProvider {
 			String packName = p.packageName;
 			Drawable icon = p.applicationInfo.loadIcon(packageManager);
 			String name = p.applicationInfo.loadLabel(packageManager).toString();
+			int uid = p.applicationInfo.uid;//安装程序的编号
 			AppInfo appInfo = new AppInfo();
 			appInfo.setPackName(packName);
 			appInfo.setIcon(icon);

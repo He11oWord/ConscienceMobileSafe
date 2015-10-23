@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.consciencemobilesafe.app.R;
+import com.consciencemobilesafe.service.WatchDogService;
 import com.consciencemobilesafe.utils.StreamTools;
 
 import android.os.Bundle;
@@ -64,7 +65,8 @@ public class SplashActivity extends Activity {
 		// 解决办法是将数据库文件拷贝到/data/data/<包名>/files/adress.db下，该操作在初始化页面中实现
 		// 在NumberQueryUtil.JAVA
 		copyDB();
-
+	
+		
 		boolean updated = sp.getBoolean("update", false);
 		if (updated) {
 			// 检查升级

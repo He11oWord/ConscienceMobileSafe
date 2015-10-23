@@ -9,6 +9,14 @@ public class AppInfo {
 	private boolean isRam;
 	private boolean isUserApp;
 	private Drawable icon;
+	private int uid;
+	public int getUid() {
+		return uid;
+	}
+
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
 
 	public boolean isUserApp() {
 		return isUserApp;

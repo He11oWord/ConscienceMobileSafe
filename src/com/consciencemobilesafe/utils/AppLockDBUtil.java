@@ -36,13 +36,14 @@ public class AppLockDBUtil {
 	 *            查询该号码是否存在
 	 * @return 存在的时候返回true
 	 */
-	public boolean query(String app_packagename) {
+	public boolean query(String name) {
 		SQLiteDatabase db = aldb.getReadableDatabase();
 		Cursor cursor = null;
 		boolean result = false;
-		cursor = db.rawQuery("select * from blacknumber where app_packagename = ?",
-				new String[] { app_packagename });
-
+		cursor = db.query("applock", null, "app_packagename=?", new String[] {name}, null, null, null);
+//		cursor = db.rawQuery("select app_packagename from applock where app_packagename = ?",
+//				new String[] { app_packagename });
+		
 		if (cursor.moveToNext()) {
 			result = true;
 		}
