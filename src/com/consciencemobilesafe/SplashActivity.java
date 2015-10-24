@@ -19,7 +19,6 @@ import com.consciencemobilesafe.utils.StreamTools;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -64,8 +63,8 @@ public class SplashActivity extends Activity {
 		// path是数据库的地址，数据库放在assets文件夹中，无法进行读取。
 		// 解决办法是将数据库文件拷贝到/data/data/<包名>/files/adress.db下，该操作在初始化页面中实现
 		// 在NumberQueryUtil.JAVA
-		copyDB();
-	
+
+		copyAntiVirusDB();
 		
 		boolean updated = sp.getBoolean("update", false);
 		if (updated) {
@@ -95,7 +94,6 @@ public class SplashActivity extends Activity {
 	/**
 	 * 拷贝电话数据库到个人目录之下
 	 */
-	@SuppressLint("ShowToast")
 	private void copyDB() {
 
 		try {
@@ -126,7 +124,39 @@ public class SplashActivity extends Activity {
 		}
 
 	}
+	/**
+	 * 拷贝病毒数据库到个人目录之下
+	 */
+	private void copyAntiVirusDB() {
 
+		try {
+			File file = new File(getFilesDir(), "antivirus.db");
+
+			// 判断文件是否存在
+			if (file.exists() && file.length() > 0) {
+				Toast.makeText(this, "文件已存在", 0).show();
+			} else {
+				Toast.makeText(this, "文件不存在", 0).show();
+				InputStream is = getAssets().open("antivirus.db");
+				FileOutputStream fos = new FileOutputStream(file);
+				byte[] buffer = new byte[1024];
+				int len = 0;
+				while ((len = is.read(buffer)) != -1) {
+					fos.write(buffer, 0, len);
+
+				}
+
+				is.close();
+				fos.close();
+			}
+		} catch (IOException e) {
+			Toast.makeText(this, "方法错误", 0).show();
+			;
+			e.printStackTrace();
+
+		}
+
+	}
 	/**
 	 * 处理发送过来的信息
 	 * 

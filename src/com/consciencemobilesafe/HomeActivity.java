@@ -78,8 +78,20 @@ public class HomeActivity extends Activity {
 					intent = new Intent(HomeActivity.this,APPManagerActivity.class);
 					startActivity(intent);
 					break;
-				case 3://进入软件管理
+				case 3://进入进程管理
 					intent = new Intent(HomeActivity.this,TaskManagerActivity.class);
+					startActivity(intent);
+					break;
+				case 4://进入流量管理
+					intent = new Intent(HomeActivity.this,TrafficManagerActivity.class);
+					startActivity(intent);
+					break;
+				case 5://进入手机杀毒管理
+					intent = new Intent(HomeActivity.this,AntiVirusActivity.class);
+					startActivity(intent);
+					break;
+				case 6://进入手机缓存清理
+					intent = new Intent(HomeActivity.this,CleanCacheActivity.class);
 					startActivity(intent);
 					break;
 				case 7 ://选中设置中心

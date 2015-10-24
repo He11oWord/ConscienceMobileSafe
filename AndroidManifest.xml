@@ -65,6 +65,9 @@
         <activity
             android:name="com.consciencemobilesafe.WatchDogItemActivity"
             android:launchMode="singleInstance" />
+        <activity android:name="com.consciencemobilesafe.AntiVirusActivity" />
+        <activity android:name="com.consciencemobilesafe.CleanCacheActivity" />
+        <activity android:name="com.consciencemobilesafe.TrafficManagerActivity" />
 
         <uses-library android:name="android.test.runner" />
 
