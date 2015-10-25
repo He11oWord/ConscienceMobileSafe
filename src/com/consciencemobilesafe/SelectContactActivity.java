@@ -23,14 +23,15 @@ import com.consciencemobilesafe.app.R;
 public class SelectContactActivity extends Activity {
 
 	private ListView select_contact_list_view;
-	final List<Map<String, String>> data = getContact();
+
+	private List<Map<String, String>> data;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.select_contact_layout);
-
+		data = getContact();
 		select_contact_list_view = (ListView) findViewById(R.id.select_contact_list_view);
 
 		// 第一个是上下文，第二个是数据，第三个是布局文件，第四个是哪些内容，第五个是这些内容分别对应哪个控件
@@ -71,7 +72,6 @@ public class SelectContactActivity extends Activity {
 
 		// 数据库查询后存放值得变量
 		Cursor cursor = null;
-		// 内容查看器
 		ContentResolver resolver = getContentResolver();
 
 		// 2种方法获得数据库的Uri

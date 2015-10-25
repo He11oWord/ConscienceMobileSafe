@@ -50,6 +50,7 @@ public class SetupActivity3 extends SetupBaseActivity {
 					SetupActivity4.class);
 			startActivity(intent);
 			finish();
+			//设置滑动的动画效果
 			overridePendingTransition(R.anim.tran_next_in, R.anim.tran_next_out);
 
 		}
@@ -63,7 +64,6 @@ public class SetupActivity3 extends SetupBaseActivity {
 	// 用来处理页面返回的值
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 
 		// 当用户直接点击返回时

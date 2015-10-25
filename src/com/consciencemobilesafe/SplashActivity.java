@@ -363,7 +363,5 @@ public class SplashActivity extends Activity {
 		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
 		sendBroadcast(intent);
-		Log.d("sadsad", "dsadasdhj");
 	}
-
 }

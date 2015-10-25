@@ -43,7 +43,6 @@ public class AtoolActivity extends Activity implements OnClickListener {
 
 		switch (v.getId()) {
 		case R.id.number_quqry_button:// 来电归属地查询
-			Log.d("sadsad", "query");
 			intent = new Intent(this, NumberQueryActivity.class);
 			startActivity(intent);
 			break;
